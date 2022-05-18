@@ -1,8 +1,10 @@
 import { gql } from "apollo-server";
-
+import { GraphQLUpload } from "graphql-upload"
 
 
 export const typeDefs = gql`
+
+scalar Upload
 
 type Comment{
     id:ID!
@@ -67,10 +69,14 @@ type Mutation {
 
     likePost(postId:String!):Post!
     unlikePost(postId:String!):Post!
+
+    uploadAvatar(file:Upload!):Boolean!
+    uploadBackground(file:Upload!):Boolean!
 },
 
 
 type Subscription{
     newPost:Post!
 }
+
 `

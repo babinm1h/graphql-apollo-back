@@ -1,6 +1,7 @@
 import { commentsResolvers } from "./comments.js";
 import { likesResolver } from "./likes.js";
 import { postResolvers } from "./posts.js";
+import { uploadResolvers } from "./upload.js";
 import { usersResolvers } from "./users.js";
 
 
@@ -16,6 +17,7 @@ export const resolvers = {
         ...postResolvers.Mutation,
         ...commentsResolvers.Mutation,
         ...likesResolver.Mutation,
+        ...uploadResolvers.Mutation,
     },
 
     Subscription: {

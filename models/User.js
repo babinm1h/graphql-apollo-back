@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
     likes: [{ type: mongoose.Types.ObjectId, ref: "Post" }],
     avatar: { type: String, default: "https://vk.com/images/camera_100.png" },
     posts: [{ type: mongoose.Types.ObjectId, ref: "Post" }],
-    backround: { type: String }
+    background: { type: String }
 
 }, { timestamps: true })
 

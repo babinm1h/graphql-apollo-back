@@ -10,14 +10,16 @@ import express from "express"
 import { createServer } from 'http'
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { WebSocketServer } from "ws"
-
+import { graphqlUploadExpress } from "graphql-upload"
 
 
 const PORT = process.env.PORT || 7777
 const app = express()
-const httpServer = createServer(app);
+app.use(graphqlUploadExpress())
 
+const httpServer = createServer(app);
 const schema = makeExecutableSchema({ typeDefs, resolvers })
+
 
 const wsServer = new WebSocketServer({
     server: httpServer,
@@ -29,7 +31,7 @@ const serverCleanup = useServer({ schema }, wsServer);
 
 const server = new ApolloServer({
     schema,
-    context: ({ req }) => ({ req}),
+    context: ({ req }) => ({ req }),
     cors: {
         origin: [`http://localhost:3000/`, `https://studio.apollographql.com`],
         credentials: true
