@@ -11,14 +11,17 @@ import { createServer } from 'http'
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { WebSocketServer } from "ws"
 import { graphqlUploadExpress } from "graphql-upload"
-
+import { constraintDirective, constraintDirectiveTypeDefs } from "graphql-constraint-directive"
 
 const PORT = process.env.PORT || 7777
 const app = express()
 app.use(graphqlUploadExpress())
 
+
 const httpServer = createServer(app);
-const schema = makeExecutableSchema({ typeDefs, resolvers })
+
+let schema = makeExecutableSchema({ typeDefs: [constraintDirectiveTypeDefs, typeDefs], resolvers })
+schema = constraintDirective()(schema)
 
 
 const wsServer = new WebSocketServer({
@@ -33,7 +36,7 @@ const server = new ApolloServer({
     schema,
     context: ({ req }) => ({ req }),
     cors: {
-        origin: [`http://localhost:3000/`, `https://studio.apollographql.com`],
+        origin: [`http://localhost:3000/`, `https://iridescent-lily-dd5cb1.netlify.app/`],
         credentials: true
     },
     plugins: [
@@ -49,8 +52,11 @@ const server = new ApolloServer({
         },
     ]
 })
+
 await server.start();
 server.applyMiddleware({ app });
+
+
 
 
 

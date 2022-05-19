@@ -1,9 +1,11 @@
-import { AuthenticationError, UserInputError } from "apollo-server-errors"
+import { AuthenticationError, ForbiddenError, UserInputError } from "apollo-server-errors"
 import bcrypt from "bcryptjs"
 import { Post } from "../../models/Post.js"
 import { User } from "../../models/User.js"
 import { checkAuth } from "../../utils/checkAuth.js"
 import { generateToken } from "../../utils/generateToken.js"
+import jwt from "jsonwebtoken"
+import emailService from "../../utils/emailService.js"
 
 export const usersResolvers = {
     Query: {
@@ -93,5 +95,37 @@ export const usersResolvers = {
             }
         },
 
+
+        async sendLink(_, { email }, context) {
+            try {
+                const user = await User.findOne({ email })
+                if (!user) throw new ForbiddenError("User with this email not found")
+
+                const secretLink = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '20m' })
+                await emailService.sendPasswordLink(email, `http://localhost:3000/password/${secretLink}`)
+
+                return "Follow the link sent to your email"
+
+            } catch (err) {
+                throw new Error(err)
+            }
+        },
+
+
+        async changePassword(_, { secretLink, password }) {
+            try {
+                const { email } = jwt.verify(secretLink, process.env.JWT_SECRET)
+                if (!email) if (!email) return ForbiddenError("Invalid secret link")
+
+                const hashedPassword = await bcrypt.hash(password, 6)
+                const user = await User.findOneAndUpdate({ email }, { password: hashedPassword })
+                if (!user) return ForbiddenError("User not found")
+
+                return "Password changed successfully"
+
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
     }
 }

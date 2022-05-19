@@ -56,10 +56,13 @@ type Query{
     getUser(userId:String!):User!
 }
 
+
 type Mutation {
     register(input:RegisterInput):User!
     login(email:String!,password:String!):User!
     getAuth:User
+    sendLink(email:String!):String
+    changePassword(secretLink:String!,password:String!):String!
     
     createPost(body:String!):Post!
     deletePost(postId:String!):String!
