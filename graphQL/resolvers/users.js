@@ -102,7 +102,7 @@ export const usersResolvers = {
                 if (!user) throw new ForbiddenError("User with this email not found")
 
                 const secretLink = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '20m' })
-                await emailService.sendPasswordLink(email, `http://localhost:3000/password/${secretLink}`)
+                await emailService.sendPasswordLink(email, `${process.env.CLIENT}/password/${secretLink}`)
 
                 return "Follow the link sent to your email"
 
